@@ -118,6 +118,7 @@ public class PhotinConnection : MonoBehaviourPunCallbacks
     {
         Hashtable m_characterSelected = new Hashtable();
         m_characterSelected["character"] = id;
+        PhotonNetwork.LocalPlayer.SetCustomProperties(m_characterSelected);
         m_hasChosenACharacter = true;
     }
 }
