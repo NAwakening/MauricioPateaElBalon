@@ -6,9 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/MPEB Scenes/MainMenu.unity
+    path: Assets/MauricioPateaElBalon/MPEB Scenes/MainMenu.unity
     guid: b18a18fd49faf9c42bc51d813a4f5a47
   - enabled: 1
-    path: Assets/MPEB Scenes/Game.unity
+    path: Assets/MauricioPateaElBalon/MPEB Scenes/Game.unity
     guid: d2a79efa99a9d6e43a70320db9be83f9
   m_configObjects: {}
