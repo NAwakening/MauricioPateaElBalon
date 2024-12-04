@@ -27,6 +27,8 @@ public class PlayerController : MonoBehaviourPunCallbacks, IOnEventCallback
     [SerializeField] Transform m_camera;
     [SerializeField] Transform m_playerRenderer;
     [SerializeField] Transform m_orientation;
+    [SerializeField] TextMeshPro m_nickname;
+    [SerializeField] Transform m_ballPosition;
 
     #endregion
 
@@ -34,8 +36,9 @@ public class PlayerController : MonoBehaviourPunCallbacks, IOnEventCallback
 
     float m_hor, m_vert;
     Vector3 m_direction;
-    [SerializeField]bool m_canPlay;
+    [SerializeField]bool m_canPlay, m_hasBall;
     string m_team;
+    GameObject m_ball;
 
     #endregion
 
@@ -50,9 +53,13 @@ public class PlayerController : MonoBehaviourPunCallbacks, IOnEventCallback
     {
         if (m_pv.IsMine)
         {
-            if (Input.GetKeyDown(KeyCode.E))
+            if (Input.GetKeyDown(KeyCode.E) && m_hasBall)
             {
-                //codigo para patear
+                m_ball = m_ballPosition.GetChild(0).gameObject;
+                m_ball.GetComponent<Rigidbody>().isKinematic = false;
+                m_ball.transform.SetParent(null);
+                m_ball.GetComponent <Rigidbody>().AddForce(m_playerRenderer.transform.forward * m_kickForce, ForceMode.Impulse);
+                m_hasBall = false;
             }
             if (Input.GetKeyDown(KeyCode.Escape))
             {
@@ -66,9 +73,16 @@ public class PlayerController : MonoBehaviourPunCallbacks, IOnEventCallback
         Movement();
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnCollisionEnter(Collision other)
     {
-        //codigo para recibir la pelota
+        if (other.gameObject.CompareTag("Ball"))
+        {
+            m_ball = other.gameObject;
+            m_ball.GetComponent<Rigidbody>().isKinematic = true;
+            m_ball.transform.position = m_ballPosition.position;
+            m_ball.transform.SetParent(m_ballPosition, true);
+            m_hasBall = true;
+        }
     }
 
     public void OnEnable()
