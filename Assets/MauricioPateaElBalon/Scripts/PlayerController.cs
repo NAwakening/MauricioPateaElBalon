@@ -46,7 +46,7 @@ public class PlayerController : MonoBehaviourPunCallbacks, IOnEventCallback
 
     private void Start()
     {
-
+        GetTeamRole();
     }
 
     private void Update()
@@ -63,7 +63,7 @@ public class PlayerController : MonoBehaviourPunCallbacks, IOnEventCallback
             }
             if (Input.GetKeyDown(KeyCode.Escape))
             {
-                //codigo para salir del nivel
+                LevelManager.instance.LeaveRoom();
             }
         }
     }
@@ -122,14 +122,31 @@ public class PlayerController : MonoBehaviourPunCallbacks, IOnEventCallback
         }
     }
 
-    void GetNewGameplayRole()
+    void GetTeamRole()
     {
         if(PhotonNetwork.LocalPlayer.CustomProperties.TryGetValue("Team", out object role))
         {
             m_team = role.ToString();
-
-            // codigo para ver a que equipo pertences
+            m_nickname.text = PhotonNetwork.NickName;
+            if (m_team == "red")
+            {
+                m_nickname.color = Color.red;
+            }
+            else
+            {
+                m_nickname.color = Color.blue;
+            }
         }
+    }
+
+    void StartGame()
+    {
+        m_canPlay = true;
+    }
+
+    void EndGame()
+    {
+        m_canPlay = false;
     }
 
     #endregion
@@ -142,7 +159,10 @@ public class PlayerController : MonoBehaviourPunCallbacks, IOnEventCallback
         switch (eventCode)
         {
             case 1:
-                GetNewGameplayRole();
+                StartGame();
+                break;
+            case 2:
+                EndGame();
                 break;
         }
     }
