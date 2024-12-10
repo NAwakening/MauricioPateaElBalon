@@ -39,6 +39,22 @@ MonoBehaviour:
   - DestroySpaceship
   - Fire
   - RespawnSpaceship
+  - UpdateBlueTeamScore
+  - UpdateFinishEnd
+  - UpdateRedTeamScore
+  - UpdateTimer
+  - UpdateWinnerText
+  - DeleteChat
+  - UpdateChat
+  - KickBall
+  - LooseBall
+  - SetBallAsMine
+  - ShowNickname
+  - GetNickname
+  - StopSwept
+  - Swept
+  - ChangeTextToBlue
+  - ChangeTextToRed
   DisableAutoOpenWizard: 1
   ShowSettings: 1
   DevRegionSetOnce: 0

@@ -18,13 +18,22 @@ public class PhotinConnection : MonoBehaviourPunCallbacks
     List<RoomItem> m_RoomItemsList;
     [SerializeField] Transform m_contentObject;
     [SerializeField] GameObject m_loadingScreen, m_normalScreen;
+    [SerializeField] Slider m_time;
+    [SerializeField] TextMeshProUGUI m_timeText;
     private bool m_hasChosenACharacter;
+    private float m_matchTime;
 
     // Start is called before the first frame update
     void Start()
     {
         PhotonNetwork.ConnectUsingSettings();
         m_RoomItemsList = new List<RoomItem>();
+    }
+
+    void Update()
+    {
+        m_matchTime = m_time.value * 10;
+        m_timeText.text = "Match Time: " + m_matchTime.ToString();
     }
 
     public override void OnConnectedToMaster()
@@ -50,14 +59,14 @@ public class PhotinConnection : MonoBehaviourPunCallbacks
     {
         base.OnCreateRoomFailed(returnCode, message);
         Debug.LogWarning("Hubo un erro al crear un room: " + message);
-        m_errorText.text = "Hubo un error al crear el room " + m_RoomName.text;
+        m_errorText.text = "There was an error when creating the room " + m_RoomName.text;
     }
 
     public override void OnJoinRoomFailed(short returnCode, string message)
     {
         base.OnJoinRoomFailed(returnCode, message);
         Debug.LogWarning("Hubo un erro al entrar: " + message);
-        m_errorText.text = "Hubo un erro al entrar al room " + m_RoomName.text;
+        m_errorText.text = "There was an error when entering the room " + m_RoomName.text;
     }
 
     RoomOptions NewRoomInfo(int maxPlayers)
@@ -74,12 +83,12 @@ public class PhotinConnection : MonoBehaviourPunCallbacks
     {
         if (m_Nickname.text == "")
         {
-            m_errorText.text = "Tienes que poner un nickname primero";
+            m_errorText.text = "You must choose a Nickname first";
             return;
         }
         if (!m_hasChosenACharacter)
         {
-            m_errorText.text = "Tienes que escoger un personaje primero";
+            m_errorText.text = "You must choose a Character first";
             return;
         }
         PhotonNetwork.NickName = m_Nickname.text;
@@ -91,41 +100,44 @@ public class PhotinConnection : MonoBehaviourPunCallbacks
         if (m_RoomName.text == "")
         {
             Debug.LogWarning("Tiene que dar un nombre al cuarto primero");
-            m_errorText.text = "Tiene que dar un nombre al cuarto primero";
+            m_errorText.text = "You must give the room a name";
             return;
         }
         if (m_Number.text == "")
         {
-            m_errorText.text = "Tiene que especificar el número de jugadores";
+            m_errorText.text = "You must specify the number of player";
             return;
         }
         else
         {
             if (int.Parse(m_Number.text) % 2 == 1)
             {
-                m_errorText.text = "El número de jugadores tiene que ser par";
+                m_errorText.text = "The number of players must be odd";
                 return;
             }
             else
             {
                 if (int.Parse(m_Number.text) < 2 || int.Parse(m_Number.text) > 10)
                 {
-                    m_errorText.text = "El número de jugadores tiene que ser como minimo 2 y como maximo 10";
+                    m_errorText.text = "The numbre of player must be between 2 and 10";
                     return;
                 }
             }
         }
         if (m_Nickname.text == "")
         {
-            m_errorText.text = "Tienes que poner un nickname primero";
+            m_errorText.text = "You must choose a Nickname first";
             return;
         }
         if (!m_hasChosenACharacter)
         {
-            m_errorText.text = "Tienes que escoger un personaje primero";
+            m_errorText.text = "You must choose a Character first";
             return;
         }
         PhotonNetwork.NickName = m_Nickname.text;
+        Hashtable playtime = new Hashtable();
+        playtime["time"] = m_matchTime;
+        PhotonNetwork.LocalPlayer.SetCustomProperties(playtime);
         PhotonNetwork.CreateRoom(m_RoomName.text, NewRoomInfo(int.Parse(m_Number.text)));
     }
 
@@ -142,7 +154,7 @@ public class PhotinConnection : MonoBehaviourPunCallbacks
             if (roomInfo.IsOpen)
             {
                 RoomItem m_newButtonRoom = Instantiate(m_RoomItemButton, m_contentObject);
-                m_newButtonRoom.SetNewRoomName(roomInfo.Name, " | " + roomInfo.PlayerCount + "/" + roomInfo.MaxPlayers);
+                m_newButtonRoom.SetNewRoomName(roomInfo.Name, " : " + roomInfo.PlayerCount + " of " + roomInfo.MaxPlayers);
                 m_RoomItemsList.Add(m_newButtonRoom);
             }
         }
